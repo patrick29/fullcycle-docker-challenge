@@ -1,0 +1,17 @@
+FROM golang:latest AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o hello .
+
+RUN go build -o hello .
+
+FROM alpine:latest
+
+WORKDIR /root
+
+COPY --from=builder /app/hello .
+
+CMD ["./hello"]
